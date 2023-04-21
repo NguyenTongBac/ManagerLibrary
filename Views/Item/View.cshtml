@@ -1,0 +1,64 @@
+@model Controllers.Dtos.Items.ItemDto
+@{
+    ViewData["Title"] = "View";
+}
+<div class="form-group">
+<label asp-for="@Model.Name"></label>
+<input asp-for="@Model.Name" class="form-control" readonly/>
+<span asp-validation-for="@Model.Name" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="@Model.Author"></label>
+    <input asp-for="@Model.Author" class="form-control" readonly/>
+    <span asp-validation-for="@Model.Author" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="@Model.PublishDate"></label>
+    <input asp-for="@Model.PublishDate" class="form-control" readonly/>
+    <span asp-validation-for="@Model.PublishDate" class="text-danger"></span>
+</div>
+<div class="form-group">
+    <label asp-for="@Model.Category"></label>
+    <input asp-for="@Model.Category" readonly/>
+    <span asp-validation-for="@Model.Category"></span>
+</div>
+<div class="form-group" id="bookPageNumber">
+    <label asp-for="@Model.NumberOfPage"></label>
+    <input asp-for="@Model.NumberOfPage" class="form-control" readonly/>
+    <span asp-validation-for="@Model.NumberOfPage" class="text-danger"></span>
+</div>
+<div class="form-group" id="dvdRuntime">
+    <label asp-for="@Model.RunTime"></label>
+    <input asp-for="@Model.RunTime" class="form-control" readonly/>
+    <span asp-validation-for="@Model.RunTime" class="text-danger"></span>
+</div>
+<a id="NewExampleButton" name="CreateExample" asp-action="Update" asp-route-Id="@Model.Id" class="mx-1 btn btn-primary btn-sm" type="submit" data-busy-text="Đang xử lý...">
+    <i class="fa fa-plus"></i> 
+    <span>Edit</span>
+</a>
+<a id="NewExampleButton" name="CreateExample" asp-action="Index" class="mx-1 btn btn-primary btn-sm" type="button" data-busy-text="Đang xử lý...">
+    <i class="fa fa-plus"></i> 
+    <span>Cancel</span>
+</a>
+
+
+<script>
+    $(document).ready(function() {
+        var type = $('#Category').val();
+        if(type === 'Book')
+        {
+            $('#bookPageNumber').show();
+            $('#dvdRuntime').hide();
+        } 
+        else if(type === 'DVD')
+        {
+            $('#dvdRuntime').show();
+            $('#bookPageNumber').hide();
+        }
+        else
+        {
+            $('#dvdRuntime').hide();
+            $('#bookPageNumber').hide();
+        }
+    })
+</script>

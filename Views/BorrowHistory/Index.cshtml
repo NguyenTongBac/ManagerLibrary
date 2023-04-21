@@ -1,0 +1,62 @@
+@model Controllers.Dtos.BorrowHistories.BorrowHistoryDto
+@{
+    ViewData["Title"] = "Index";
+    var BorrowHistories = ViewBag.BorrowHistories;
+}
+
+<div class="page-header">
+    <div class="page-block">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="page-header-title">
+                    <div class="float-right agent" >
+                        <a class="btn btn-primary btn-sm rounded" asp-action="Create">
+                            <i class="feather icon-plus-circle"></i>
+                            Create BorrowHistory
+                        </a>
+                    </div>
+                    <h5 class="m-b-10">BorrowHistory</h5>
+                </div>
+                    <table id="datatable-forms" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">BorrowerName</th>
+                                <th scope="col">BorrowDate</th>
+                                <th scope="col">Cost</th>
+                                <th scope="col">Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in BorrowHistories)
+                            {
+                                <tr href="@Url.Action("View", "BorrowHistory", "@item.Id")">
+                                    <td>@item.BorrowerName</td>
+                                    <td>@item.AddDate</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Cost</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+
+        // redirect to corresponding form view on click
+        $('#datatable-forms tbody').on('click', 'tr td', function(){
+            if ($(this).index() <= 1)
+                location.href = $(this).parent().attr('href');
+        });
+        // initialize DataTable for Forms list
+        table = $('#datatable-forms').DataTable({
+            order: [[1, 'desc']],
+        });
+
+    });
+</script>

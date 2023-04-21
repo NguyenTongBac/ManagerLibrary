@@ -1,0 +1,24 @@
+@model Controllers.Dtos.Users.UserDto
+@{
+    ViewData["Title"] = "Index";
+    var users = @Model;
+}
+<table id="example" class="display" style="width:100%">
+    <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(@Model => @Model.UserName)</th>
+                <th>@Html.DisplayNameFor(@Model => @Model.Password)</th>
+                <th></th>
+            </tr>
+    </thead>
+    <tbody>
+        @* @foreach (var user in users)
+        {
+            
+        } *@
+    </tbody>
+</table>
+
+<script>
+
+</script>

@@ -1,0 +1,65 @@
+@model Controllers.Dtos.BorrowHistories.BorrowHistoryCreateDto
+@{
+    ViewData["Title"] = "Create";
+    var listItem = ViewBag.ListItem;
+    var listBorrower = ViewBag.ListBorrower;
+}
+
+<div class="page-header">
+    <div class="page-block">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="page-header-title">
+                    <div class="float-right agent" >
+                        <div class="form-group">
+                            <label asp-for="@Model.BorrowerId"></label>
+                            <select class="form-select" aria-label="Default select example" asp-for="@Model.BorrowerId" asp-items="@listBorrower"></select>
+                            <span asp-validation-for="@Model.BorrowerId"></span>
+                        </div>
+                    </div>
+                    <h5 class="m-b-10">Borrowing</h5>
+                </div>
+                <div class="dt-responsive table-responsive custom-datatable">
+                    <table id="datatable-forms" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in listItem)
+                            {
+                                <tr href="@Url.Action("View", "Item", new { Id = @item.Id })">
+                                    <td>@item.Name</td>
+                                    <td>@item.Author</td>
+                                    <td>@item.Category</td>
+                                    @* <td><input asp-for="@item.Quantity" class="form-control"/></td> *@
+                                </tr>        
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // redirect to corresponding form view on click
+        $('#datatable-forms tbody').on('click', 'tr td', function(){
+            if ($(this).index() <= 1)
+                location.href = $(this).parent().attr('href');
+        });
+        // initialize DataTable for Forms list
+        table = $('#datatable-forms').DataTable({
+            order: [[1, 'desc']],
+        });
+
+    });
+</script>

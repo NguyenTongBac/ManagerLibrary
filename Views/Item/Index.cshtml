@@ -1,0 +1,75 @@
+@model ItemDto
+@using Controllers.Dtos.Items;
+@{
+    ViewData["Title"] = "Index";
+    var items = ViewBag.ListItem;
+}
+@section Scripts{
+    <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+}
+@section Styles{
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
+}
+
+<div class="page-header">
+    <div class="page-block">
+        <div class="row align-items-center">
+            <div class="col-md-12">
+                <div class="page-header-title">
+                    <div class="float-right agent" >
+                        <a class="btn btn-primary btn-sm rounded" asp-action="Create">
+                            <i class="feather icon-plus-circle"></i>
+                            Create Item
+                        </a>
+                    </div>
+                    <h5 class="m-b-10">Item</h5>
+                </div>
+                <div class="dt-responsive table-responsive custom-datatable">
+                    <table id="datatable-forms" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">PublishDate</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in items)
+                            {
+                                <tr href="@Url.Action("View", "Item", new { Id = @item.Id })">
+                                    
+                                    <td>@item.Name</td>
+                                    <td>@item.Author</td>
+                                    <td>@item.PublishDate</td>
+                                    <td>@item.Price</td>
+                                    <td>
+                                        <a class="mx-1 btn btn-primary btn-sm" asp-action="Update" asp-route-Id="@item.Id">Update</a>
+                                        <a class="mx-1 btn btn-primary btn-sm" asp-action="Delete" asp-route-Id="@item.Id">Delete</a>
+                                    </td>
+                                </tr>        
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // redirect to corresponding form view on click
+        $('#datatable-forms tbody').on('click', 'tr td', function(){
+            if ($(this).index() <= 1)
+                location.href = $(this).parent().attr('href');
+        });
+        // initialize DataTable for Forms list
+        table = $('#datatable-forms').DataTable({
+            order: [[1, 'desc']],
+        });
+
+    });
+</script>

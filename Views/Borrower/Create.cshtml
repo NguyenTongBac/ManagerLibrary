@@ -1,0 +1,30 @@
+@model Controllers.Dtos.Borrowers.BorrowerCreateUpdateDto
+@using Models.Enums
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "_Layout";
+    var SelectCategory = ViewBag.SelectCategory;
+}
+<form action="Create" method="post">
+
+    <div class="form-group">
+        <label asp-for="@Model.Name"></label>
+        <input asp-for="@Model.Name" class="form-control"/>
+        <span asp-validation-for="@Model.Name" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Email"></label>
+        <input asp-for="@Model.Email" class="form-control" />
+        <span asp-validation-for="@Model.Email" class="text-danger"></span>
+    </div>
+
+    <button id="NewExampleButton" name="CreateExample" class="mx-1 btn btn-primary btn-sm" type="submit" data-busy-text="Đang xử lý...">
+        <i class="fa fa-plus"></i> 
+        <span>Save</span>
+    </button>
+    <a id="NewExampleButton" name="CreateExample" href="Index" class="mx-1 btn btn-primary btn-sm" type="button" data-busy-text="Đang xử lý...">
+        <i class="fa fa-plus"></i> 
+        <span>Cancel</span>
+    </a>
+</form>
