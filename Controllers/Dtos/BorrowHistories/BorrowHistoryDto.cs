@@ -17,4 +17,9 @@ public class BorrowHistoryDto
     public int Quantity { get; set; }
 
     public ICollection<BorrowHistoryDetailDto> BorrowHistoryDetailDtos { get; set; }
+
+    public BorrowHistoryDto()
+    {
+        BorrowHistoryDetailDtos = new HashSet<BorrowHistoryDetailDto>();
+    }
 }

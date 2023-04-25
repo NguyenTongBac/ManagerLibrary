@@ -1,7 +1,7 @@
-@model Controllers.Dtos.BorrowHistories.BorrowHistoryDto
+@using Controllers.Dtos.BorrowHistories
+@model List<BorrowHistoryDto>
 @{
     ViewData["Title"] = "Index";
-    var BorrowHistories = ViewBag.BorrowHistories;
 }
 
 <div class="page-header">
@@ -24,16 +24,18 @@
                                 <th scope="col">BorrowDate</th>
                                 <th scope="col">Cost</th>
                                 <th scope="col">Quantity</th>
+                                <th scope="col"></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in BorrowHistories)
+                            @foreach (var item in Model)
                             {
-                                <tr href="@Url.Action("View", "BorrowHistory", "@item.Id")">
+                                <tr href="@Url.Action("View", "BorrowHistory", new { id = @item.Id })">
                                     <td>@item.BorrowerName</td>
                                     <td>@item.AddDate</td>
-                                    <td>@item.Quantity</td>
                                     <td>@item.Cost</td>
+                                    <td>@item.Quantity</td>
+                                    <td><a class="mx-1 btn btn-primary btn-sm" asp-action="Delete" asp-route-Id="@item.Id">Delete</a></td>
                                 </tr>
                             }
                         </tbody>

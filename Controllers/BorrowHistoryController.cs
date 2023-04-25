@@ -24,12 +24,12 @@ public class BorrowHistoryController : Controller
         _autoMapper = autoMapper;
         _repositoryBorrower = repositoryBorrower;
     }
+
     public IActionResult Index()
     {
-        var borrowHistories = _repository.GetList();
-        ViewBag.borrowHistories = _autoMapper.Map<List<BorrowHistory>, List<BorrowHistoryDto>>(borrowHistories);
+        var borrowHistories = _repository.GetQueryable().Include(x=> x.Borrower).Include(x => x.BorrowHistoryDetails).ToList();
 
-        return View();
+        return View(_autoMapper.Map<List<BorrowHistory>, List<BorrowHistoryDto>>(borrowHistories));
     }
 
     public IActionResult View(Guid id)
@@ -47,14 +47,24 @@ public class BorrowHistoryController : Controller
     {
         ViewBag.ListItem = _autoMapper.Map<List<Item>, List<ItemDto>>(_repositoryItem.GetList());
         var listBorrower = _autoMapper.Map<List<Borrower>, List<BorrowerDto>>(_repositoryBorrower.GetList());
-        ViewBag.ListBorrower = new SelectList(listBorrower);
 
+        ViewBag.ListBorrower = new List<SelectListItem>(listBorrower.Select(x => new SelectListItem{
+            Selected = false,
+            Text = x.Name,
+            Value = x.Id.ToString()
+        }));
 
-        return View();
+        return View(new BorrowHistoryCreateDto());
     }
 
-    public IActionResult Create(BorrowHistory borrowHistory)
+    [HttpPost]
+    public IActionResult Create(BorrowHistoryCreateDto borrowHistoryCreateDto)
     {
+        var borrowHistory = _autoMapper.Map<BorrowHistoryCreateDto, BorrowHistory>(borrowHistoryCreateDto);
+        
+        borrowHistory.BorrowHistoryDetails = borrowHistory.BorrowHistoryDetails.Where(x => x.Quantity > 0).ToList();
+        borrowHistory.Cost = borrowHistory.BorrowHistoryDetails.Sum(x => x.Price);
+
         if(ModelState.IsValid)
         {
             _repository.Create(borrowHistory);
@@ -62,6 +72,24 @@ public class BorrowHistoryController : Controller
             return RedirectToAction("Index");
         }
 
+        ViewBag.ListItem = _autoMapper.Map<List<Item>, List<ItemDto>>(_repositoryItem.GetList());
+        var listBorrower = _autoMapper.Map<List<Borrower>, List<BorrowerDto>>(_repositoryBorrower.GetList());
+
+        ViewBag.ListBorrower = new List<SelectListItem>(listBorrower.Select(x => new SelectListItem{
+            Selected = false,
+            Text = x.Name,
+            Value = x.Id.ToString()
+        }));
+
         return View();
+    }
+
+    public IActionResult Delete(Guid id)
+    {
+        var item = _repository.GetQueryable().Include(x => x.BorrowHistoryDetails).FirstOrDefault(x => x.Id == id);
+
+        _repository.Delete(item);
+
+        return RedirectToAction("Index");
     }
 }

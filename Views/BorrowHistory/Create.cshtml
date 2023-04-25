@@ -1,18 +1,38 @@
-@model Controllers.Dtos.BorrowHistories.BorrowHistoryCreateDto
+@model BorrowHistoryCreateDto
+@using Controllers.Dtos.BorrowHistories
+@using Controllers.Dtos.BorrowerHistoryDetails
+
 @{
     ViewData["Title"] = "Create";
+
     var listItem = ViewBag.ListItem;
     var listBorrower = ViewBag.ListBorrower;
+
+    foreach(var item in listItem)
+    {
+        var borrowHistoryDetail = new BorrowHistoryDetailCreateDto(){
+            ItemId = item.Id,
+            Item = item
+        };
+        Model.BorrowHistoryDetailCreateDtos.Add(borrowHistoryDetail);
+    }
+}
+@section Scripts{
+    <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+}
+@section Styles{
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
 }
 
 <div class="page-header">
     <div class="page-block">
         <div class="row align-items-center">
+            <form asp-controller="BorrowHistory" asp-action="Create">
             <div class="col-md-12">
                 <div class="page-header-title">
                     <div class="float-right agent" >
                         <div class="form-group">
-                            <label asp-for="@Model.BorrowerId"></label>
+                            <label asp-for="@Model.BorrowerId">Borrower</label>
                             <select class="form-select" aria-label="Default select example" asp-for="@Model.BorrowerId" asp-items="@listBorrower"></select>
                             <span asp-validation-for="@Model.BorrowerId"></span>
                         </div>
@@ -20,7 +40,8 @@
                     <h5 class="m-b-10">Borrowing</h5>
                 </div>
                 <div class="dt-responsive table-responsive custom-datatable">
-                    <table id="datatable-forms" class="table" style="width:100%">
+                    
+                        <table id="datatable-forms" class="table" style="width:100%">
                         <thead>
                             <tr>
                                 <th scope="col">Name</th>
@@ -31,19 +52,30 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in listItem)
+                            @for (var i = 0; i < Model.BorrowHistoryDetailCreateDtos.Count; i++)
                             {
-                                <tr href="@Url.Action("View", "Item", new { Id = @item.Id })">
-                                    <td>@item.Name</td>
-                                    <td>@item.Author</td>
-                                    <td>@item.Category</td>
-                                    @* <td><input asp-for="@item.Quantity" class="form-control"/></td> *@
-                                </tr>        
+                                <tr asp-for="@Model.BorrowHistoryDetailCreateDtos[@i]">
+                                    <input asp-for="@Model.BorrowHistoryDetailCreateDtos[@i].ItemId"/>
+                                    <td>@Model.BorrowHistoryDetailCreateDtos[i].Item.Name</td>
+                                    <td>@Model.BorrowHistoryDetailCreateDtos[i].Item.Author</td>
+                                    <td>@Model.BorrowHistoryDetailCreateDtos[i].Item.Category</td>
+                                    <td><input asp-for="@Model.BorrowHistoryDetailCreateDtos[@i].Quantity" id="Quantity" type="number" class="form-control"/></td>
+                                    <td id="item-Price" value="@Model.BorrowHistoryDetailCreateDtos[@i].Item.Price"><input asp-for="@Model.BorrowHistoryDetailCreateDtos[@i].Price" id="Price" type="number" class="form-control" readonly></td>
+                                </tr>   
                             }
                         </tbody>
-                    </table>
+                        </table>
+                        <button id="NewExampleButton" name="CreateExample" class="mx-1 btn btn-primary btn-sm" type="submit" data-busy-text="Đang xử lý...">
+                            <i class="fa fa-plus"></i> 
+                            <span>Save</span>
+                        </button>
+                        <a id="NewExampleButton" name="CreateExample" href="Index" class="mx-1 btn btn-primary btn-sm" type="button" data-busy-text="Đang xử lý...">
+                            <i class="fa fa-plus"></i> 
+                            <span>Cancel</span>
+                        </a>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 </div>
@@ -58,8 +90,17 @@
         });
         // initialize DataTable for Forms list
         table = $('#datatable-forms').DataTable({
-            order: [[1, 'desc']],
+            ordering: false,
         });
+
+        $('#datatable-forms tbody').on('keyup change', 'tr td #Quantity', function(){
+            var price = $(this).val() * $(this).parent().parent().find('#item-Price').attr('value');
+            console.log(price); 
+            console.log($(this).val());
+            $(this).parent().parent().find('#Price').val(price);
+            console.log($(this).parent().parent().find('#borrowHistoryDetailCreateDto_Price').val());
+        });
+
 
     });
 </script>

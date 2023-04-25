@@ -1,0 +1,73 @@
+@model Controllers.Dtos.BorrowHistories.BorrowHistoryDto
+@{
+    ViewData["Title"] = "View";
+}
+
+@section Scripts{
+    <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+}
+@section Styles{
+    <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
+}
+
+<div class="page-header">
+    <div class="page-block">
+        <div class="row align-items-center">
+            <form asp-controller="BorrowHistory" asp-action="Create">
+            <div class="col-md-12">
+                <div class="page-header-title">
+                    <div class="float-right agent" >
+                        <div class="form-group">
+                            <label asp-for="@Model.BorrowerName">Borrower</label>
+                            <input asp-for="@Model.BorrowerName" readonly>
+                            <span asp-validation-for="@Model.BorrowerName"></span>
+                        </div>
+                    </div>
+                    <h5 class="m-b-10">Borrowing</h5>
+                </div>
+                <div class="dt-responsive table-responsive custom-datatable">
+                    
+                        <table id="datatable-forms" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th scope="col">ItemName</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.BorrowHistoryDetailDtos)
+                            {
+                                <tr href="@Url.Action("View", "Item", new {id = item.Item.Id})">
+                                    <td>@item.ItemName</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price</td>
+                                </tr>   
+                            }
+                        </tbody>
+                        </table>
+                        <a id="NewExampleButton" name="CreateExample" href="Index" class="mx-1 btn btn-primary btn-sm" type="button" data-busy-text="Đang xử lý...">
+                            <i class="fa fa-plus"></i> 
+                            <span>Cancel</span>
+                        </a>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+
+        // redirect to corresponding form view on click
+        $('#datatable-forms tbody').on('click', 'tr td', function(){
+            if ($(this).index() <= 1)
+                location.href = $(this).parent().attr('href');
+        });
+        // initialize DataTable for Forms list
+        table = $('#datatable-forms').DataTable({
+            ordering: false,
+        });
+    });
+</script>

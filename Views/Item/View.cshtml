@@ -18,9 +18,14 @@
     <span asp-validation-for="@Model.PublishDate" class="text-danger"></span>
 </div>
 <div class="form-group">
+    <label asp-for="@Model.Price"></label>
+    <input asp-for="@Model.Price" class="form-control" readonly/>
+    <span asp-validation-for="@Model.Price" class="text-danger"></span>
+</div>
+<div class="form-group">
     <label asp-for="@Model.Category"></label>
-    <input asp-for="@Model.Category" readonly/>
-    <span asp-validation-for="@Model.Category"></span>
+    <input asp-for="@Model.Category" class="form-control" readonly/>
+    <span asp-validation-for="@Model.Category" class="text-danger"></span>
 </div>
 <div class="form-group" id="bookPageNumber">
     <label asp-for="@Model.NumberOfPage"></label>

@@ -23,10 +23,10 @@ public class ManagerLibraryControllerAutoMapper : Profile
         CreateMap<BorrowHistory, BorrowHistoryDto>()
         .ForMember(x => x.BorrowerName, y => y.MapFrom(u => u.Borrower.Name))
         .ForMember(x => x.Quantity, y => y.MapFrom(u => u.BorrowHistoryDetails.Sum(z => z.Quantity)))
-        .ForMember(x => x.Cost, y => y.MapFrom(u => u.BorrowHistoryDetails.Sum(z => z.Price)));
-        CreateMap<BorrowHistoryCreateDto, BorrowHistory>();
+        .ForMember(x => x.BorrowHistoryDetailDtos, y => y.MapFrom(z => z.BorrowHistoryDetails));
+        CreateMap<BorrowHistoryCreateDto, BorrowHistory>().ForMember(x => x.BorrowHistoryDetails, y => y.MapFrom(u => u.BorrowHistoryDetailCreateDtos));
 
-        CreateMap<BorrowHistoryDetail, BorrowHistoryDetailDto>();
+        CreateMap<BorrowHistoryDetail, BorrowHistoryDetailDto>().ForMember(x => x.ItemName, y => y.MapFrom(z => z.Item.Name));
         CreateMap<BorrowHistoryDetailCreateDto, BorrowHistoryDetail>();
 
         CreateMap<User, UserDto>();
