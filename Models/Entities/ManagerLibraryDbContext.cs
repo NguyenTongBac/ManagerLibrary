@@ -13,12 +13,8 @@ namespace Models.Entities
 
         public DbSet<BorrowHistoryDetail> BorrowHistoryDetails { get; set; }
 
-        public DbSet<User> Users { get; set; }
-
         public DbSet<Borrower> Borrowers { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-        }
+        protected override void OnModelCreating(ModelBuilder modelBuilder){}
     }
 }

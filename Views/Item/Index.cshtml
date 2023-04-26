@@ -1,8 +1,7 @@
-@model ItemDto
+@model List<ItemDto>
 @using Controllers.Dtos.Items;
 @{
     ViewData["Title"] = "Index";
-    var items = ViewBag.ListItem;
 }
 @section Scripts{
     <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
@@ -36,7 +35,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var item in items)
+                            @foreach (var item in Model)
                             {
                                 <tr href="@Url.Action("View", "Item", new { Id = @item.Id })">
                                     

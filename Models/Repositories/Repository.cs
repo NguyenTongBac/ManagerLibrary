@@ -17,26 +17,28 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         entities = _dbContext.Set<T>();
     }
 
-    public virtual void Create(T entity)
+    public virtual async Task<bool> Create(T entity)
     {
-        entities.Add(entity);
-        _dbContext.SaveChanges();
+        await entities.AddAsync(entity);
+        
+        return true;
     }
 
-    public virtual void Delete(T entity)
+    public virtual async Task<bool> Delete(T entity)
     {
         entities.Remove(entity);
-        _dbContext.SaveChanges();
+
+        return true;
     }
 
-    public virtual List<T> GetList()
+    public virtual async Task<List<T>> GetList()
     {
-        return entities.ToList();
+        return await entities.ToListAsync();
     }
 
-    public virtual T GetById(Guid id)
+    public virtual async Task<T> GetById(Guid id)
     {
-        return entities.FirstOrDefault(x => x.Id == id);
+        return await entities.FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public virtual IQueryable<T> GetQueryable()
@@ -44,9 +46,10 @@ public class Repository<T> : IRepository<T> where T : BaseEntity
         return entities.AsQueryable();
     }
 
-    public virtual void Update(T entity)
+    public virtual async Task<bool> Update(T entity)
     {
         entities.Update(entity);
-        _dbContext.SaveChanges();
+
+        return true;
     }
 }

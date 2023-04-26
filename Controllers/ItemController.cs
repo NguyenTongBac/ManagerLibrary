@@ -13,12 +13,12 @@ namespace Controllers;
 
 public class ItemController : Controller
 {
-    private readonly IRepository<Item> _repository;
+    private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _autoMapper;
 
-    public ItemController(IRepository<Item> repository, IMapper autoMapper)
+    public ItemController(IUnitOfWork unitOfWork, IMapper autoMapper)
     {
-        _repository = repository;
+        _unitOfWork = unitOfWork;
         _autoMapper = autoMapper;
     }
 
@@ -26,7 +26,7 @@ public class ItemController : Controller
     public JsonResult GetListItem(ItemSearchDto condition)
     {   
         PageResultDto<ItemDto> result = new PageResultDto<ItemDto>();
-        var items = _repository.GetQueryable()
+        var items = _unitOfWork.ItemRepository.GetQueryable()
         .Where(x => x.Name.Contains(condition.Keyword)).OrderBy(condition.Sorting);
         
         result.TotalCount = items.ToList().Count();
@@ -38,14 +38,15 @@ public class ItemController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        ViewBag.ListItem = _autoMapper.Map<List<Item>, List<ItemDto>>(_repository.GetList());
-        return View();
+        var items = _autoMapper.Map<List<Item>, List<ItemDto>>(await _unitOfWork.ItemRepository.GetList());
+        
+        return View(items);
     }
 
     [HttpGet]
-    public IActionResult Create()
+    public async Task<IActionResult> Create()
     {
         var selectCategory = new SelectList(Enum.GetValues(typeof(Category)));
         ViewBag.SelectCategory = selectCategory;
@@ -54,14 +55,16 @@ public class ItemController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(ItemCreateUpdateDto item)
+    public async Task<IActionResult> Create(ItemCreateUpdateDto item)
     {
         if(ModelState.IsValid)
         {
-            _repository.Create(_autoMapper.Map<ItemCreateUpdateDto, Item>(item));
-            
+            await _unitOfWork.ItemRepository.Create(_autoMapper.Map<ItemCreateUpdateDto, Item>(item));
+            await _unitOfWork.CompleteAsync();
+
             return RedirectToAction("Index");
         }
+
         var selectCategory = new SelectList(Enum.GetValues(typeof(Category)));
         ViewBag.SelectCategory = selectCategory;
 
@@ -69,19 +72,20 @@ public class ItemController : Controller
     }
 
     [HttpGet]
-    public IActionResult Update(Guid id)
+    public async Task<IActionResult> Update(Guid id)
     {
-        var item = _repository.GetById(id);
+        var item = await _unitOfWork.ItemRepository.GetById(id);
 
         return View(_autoMapper.Map<Item, ItemCreateUpdateDto>(item));
     }
 
     [HttpPost]
-    public IActionResult Update(ItemCreateUpdateDto item)
+    public async Task<IActionResult> Update(ItemCreateUpdateDto item)
     {
         if(ModelState.IsValid)
         {
-            _repository.Update(_autoMapper.Map<ItemCreateUpdateDto, Item>(item));
+            await _unitOfWork.ItemRepository.Update(_autoMapper.Map<ItemCreateUpdateDto, Item>(item));
+            await _unitOfWork.CompleteAsync();
 
             return RedirectToAction("Index");
         }
@@ -91,19 +95,21 @@ public class ItemController : Controller
 
     [HttpGet]
     [Route("Item/Delete/{id}")]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        var item = _repository.GetById(id);
-        _repository.Delete(item);
+        var item = await _unitOfWork.ItemRepository.GetById(id);
+
+        await _unitOfWork.ItemRepository.Delete(item);
+        await _unitOfWork.CompleteAsync();
 
         return RedirectToAction("Index");
     }
 
     [HttpGet]
     [Route("Item/View/{id}")]
-    public IActionResult View(Guid id)
+    public async Task<IActionResult> View(Guid id)
     {
-        var item = _repository.GetById(id);
+        var item = await _unitOfWork.ItemRepository.GetById(id);
         
         return View(_autoMapper.Map<Item, ItemDto>(item));
     }

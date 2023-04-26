@@ -2,15 +2,15 @@ namespace Controllers.IRepositories;
 
 public interface IRepository<T>
 {
-    List<T> GetList();
+    Task<List<T>> GetList();
 
     IQueryable<T> GetQueryable();
 
-    T GetById(Guid id);
+    Task<T> GetById(Guid id);
 
-    void Update(T entity);
+    Task<bool> Update(T entity);
 
-    void Create(T entity);
+    Task<bool> Create(T entity);
 
-    void Delete(T entity);
+    Task<bool> Delete(T entity);
 }

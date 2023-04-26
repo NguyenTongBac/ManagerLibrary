@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using AutoMapper;
 using Controllers.Dtos.Borrowers;
 using Controllers.IRepositories;
@@ -8,26 +9,29 @@ namespace Controllers;
 
 public class BorrowerController : Controller
 {
-    private readonly IRepository<Borrower> _repository;
+    // private readonly IRepository<Borrower> _unitOfWork.BorrowerRepository;
+    private readonly IUnitOfWork _unitOfWork;
     
     private readonly IMapper _mapper;
 
-    public BorrowerController(IRepository<Borrower> repository, IMapper mapper)
+    public BorrowerController(IUnitOfWork unitOfWork, IMapper mapper)
     {
         _mapper = mapper;
-        _repository = repository;
+        _unitOfWork = unitOfWork;
     }
-    public IActionResult Index()
+    
+    public async Task<IActionResult> Index()
     {
-        var listBorrower =  _repository.GetList();
-        ViewBag.ListBorrower = _mapper.Map<List<Borrower>, List<BorrowerDto>>(listBorrower);
-        return View();
+        var listBorrower =  await _unitOfWork.BorrowerRepository.GetList();
+
+        return View(_mapper.Map<List<Borrower>, List<BorrowerDto>>(listBorrower));
     }
 
     [HttpGet]
-    public IActionResult View(Guid id)
+    public async Task<IActionResult> View(Guid id)
     {
-        var borrower = _repository.GetById(id);
+        var borrower = await _unitOfWork.BorrowerRepository.GetById(id);
+
         return View(_mapper.Map<Borrower, BorrowerDto>(borrower));
     }
 
@@ -38,33 +42,36 @@ public class BorrowerController : Controller
     }
 
     [HttpPost]
-    public IActionResult Create(BorrowerCreateUpdateDto borrower)
+    public async Task<IActionResult> Create(BorrowerCreateUpdateDto borrower)
     {
-        _repository.Create(_mapper.Map<BorrowerCreateUpdateDto, Borrower>(borrower));
+        await _unitOfWork.BorrowerRepository.Create(_mapper.Map<BorrowerCreateUpdateDto, Borrower>(borrower));
+        await _unitOfWork.CompleteAsync();
 
         return RedirectToAction("Index");
     }
 
     [HttpGet]
-    public IActionResult Update(Guid id)
+    public async Task<IActionResult> Update(Guid id)
     {
-        var borrower = _repository.GetById(id);
+        var borrower = await _unitOfWork.BorrowerRepository.GetById(id);
 
         return View(_mapper.Map<Borrower, BorrowerCreateUpdateDto>(borrower));
     }
 
     [HttpPost]
-    public IActionResult Update(BorrowerCreateUpdateDto borrower)
+    public async Task<IActionResult> Update(BorrowerCreateUpdateDto borrower)
     {
-        _repository.Update(_mapper.Map<BorrowerCreateUpdateDto, Borrower>(borrower));
+        await _unitOfWork.BorrowerRepository.Update(_mapper.Map<BorrowerCreateUpdateDto, Borrower>(borrower));
+        await _unitOfWork.CompleteAsync();
 
         return RedirectToAction("Index");
     }
 
     [HttpGet]
-    public IActionResult Delete(Guid id)
+    public async Task<IActionResult> Delete(Guid id)
     {
-        _repository.Delete(_repository.GetById(id));
+        await _unitOfWork.BorrowerRepository.Delete(await _unitOfWork.BorrowerRepository.GetById(id));
+        await _unitOfWork.CompleteAsync();
 
         return RedirectToAction("Index");
     }

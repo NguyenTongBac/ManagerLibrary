@@ -28,8 +28,5 @@ public class ManagerLibraryControllerAutoMapper : Profile
 
         CreateMap<BorrowHistoryDetail, BorrowHistoryDetailDto>().ForMember(x => x.ItemName, y => y.MapFrom(z => z.Item.Name));
         CreateMap<BorrowHistoryDetailCreateDto, BorrowHistoryDetail>();
-
-        CreateMap<User, UserDto>();
-        CreateMap<User, UserCreateUpdateDto>();
     }
 }
